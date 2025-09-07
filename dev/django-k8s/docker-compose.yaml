@@ -17,6 +17,7 @@ services:
       - PORT=8000
       - PYTHONUNBUFFERED=1
       # Add explicit environment variables to ensure they're passed
+      - DJANGO_SUPERUSER_EMAIL=abhijeetkumar3015@gmail.com
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
       - DEBUG=${DEBUG}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -31,7 +32,7 @@ services:
     restart: unless-stopped
 
   postgres_db:
-      image: postgres:13
+      image: postgres:15
       env_file:
         - .env
       environment:

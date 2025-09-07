@@ -69,36 +69,36 @@ WSGI_APPLICATION = 'web.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 # Default SQLite configuration (fallback)
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# In your settings.py
+import os
 
-# PostgreSQL configuration
-DB_USERNAME = os.environ.get('POSTGRES_USER')
-DB_PASSWORD = os.environ.get('POSTGRES_PASSWORD')
-DB_DATABASE = os.environ.get('POSTGRES_DB')
-DB_HOST = os.environ.get('POSTGRES_HOST')  # Fixed typo: HOTS -> HOST
-DB_PORT = os.environ.get('POSTGRES_PORT')
+# Use PostgreSQL if all environment variables are available, else SQLite
 
-DB_IS_AVAILABLE = all([
-    DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_DATABASE
-])
-
-# Use PostgreSQL if all environment variables are available
-if DB_IS_AVAILABLE:
+if all([
+    os.environ.get('POSTGRES_USER'),
+    os.environ.get('POSTGRES_PASSWORD'),
+    os.environ.get('POSTGRES_HOST'),
+    os.environ.get('POSTGRES_PORT'),
+    os.environ.get('POSTGRES_DB')
+]):
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.postgresql',  # Fixed: sqlite3 -> postgresql
-            'NAME': DB_DATABASE,
-            'USER': DB_USERNAME,
-            'HOST': DB_HOST,
-            'PORT': DB_PORT,
-            'PASSWORD': DB_PASSWORD
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_DB'),
+            'USER': os.environ.get('POSTGRES_USER'),
+            'HOST': os.environ.get('POSTGRES_HOST'),
+            'PORT': os.environ.get('POSTGRES_PORT'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD')
         }
     }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
 
 print(DATABASES, 'database configuration')
 
